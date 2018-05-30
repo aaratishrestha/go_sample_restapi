@@ -76,14 +76,8 @@ func DeletePerson(w http.ResponseWriter, r *http.Request) {
     for index, item := range people {
         if item.ID == params["id"] {
 			log.Println("item to delete")
-			log.Println(item)
 			people = append(people[:index], people[index+1:]...)
-			log.Println(people)
-
-			b, _ := json.Marshal(people)
-			log.Println("Firsttttttttt")
-			log.Println(string(b))
-            break
+            		break
 		}
 	}
 	json.NewEncoder(w).Encode(people)
