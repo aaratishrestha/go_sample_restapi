@@ -23,12 +23,14 @@ type Address struct {
 var people []Person
 
 // our main function
-func main() {
+func main(){
 
-
-	people = append(people, Person{ID: "1", Firstname: "John", Lastname: "Doe", Address: &Address{City: "City X", State: "State X"}})
+	people = append(people, Person{ID: "3", Firstname: "John", Lastname: "Doe", Address: &Address{City: "City X", State: "State X"}})
 	people = append(people, Person{ID: "2", Firstname: "Koko", Lastname: "Doe", Address: &Address{City: "City Z", State: "State Y"}})
-	people = append(people, Person{ID: "3", Firstname: "Francis", Lastname: "Sunday"})
+	people = append(people, Person{ID: "1", Firstname: "Francis", Lastname: "Sunday"}) 
+	
+
+	
 	router := mux.NewRouter()
 	
 	router.HandleFunc("/", Default).Methods("GET")
@@ -39,18 +41,22 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8000", router))
 
 	
-
 	
 }
 //Default page
 func Default(w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write([]byte("Hello World!\n"))
+	w.Write([]byte("Hello World!"))
 }
 
 //Get all people
 func GetPeople(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(people)
+	if(len(people) <= 0){
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.Write([]byte("People list is empty\n"))
+	}else{
+		json.NewEncoder(w).Encode(people)
+	}
 }
 
 
@@ -59,9 +65,13 @@ func GetPerson(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
     for _, item := range people {
     	if item.ID == params["id"]{
+			w.Header().Set("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(item)		
-		}
+		 }
 	}
+	/* w.WriteHeader(http.StatusNotFound)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Write([]byte("No person found with the id::"+params["id"]+"\n")) */
 }
 
 func CreatePerson(w http.ResponseWriter, r *http.Request) {
